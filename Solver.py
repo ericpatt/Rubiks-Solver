@@ -169,39 +169,28 @@ def search(cube, moves_made, depth):
 
     return shortest_solution
 
-    # if depth == 0:
-    #     if is_solved(cube.get_state()):
-    #         # print("solution found:", moves_made)
-    #         return moves_made
-    #     return None
-    # else:
-    #     prev_move = ""
-    #     if len(moves_made) > 0:
-    #         prev_move = moves_made[len(moves_made) - 1]
-    #     valid = valid_moves(prev_move)
-    #     for m in valid:
-    #         # print("previous move: {}  valid moves: {}".format(prev_move, valid))
-    #         next_state = deepcopy(current_cube_state)
-    #         next_state.move(m)
-    #         next_moves = deepcopy(moves_made)
-    #         next_moves.append(m)
-    #         solution = search(next_state, next_moves, depth - 1)
-    #         if solution is not None:
-    #             return solution
-    #     return None
+
+def scramble(moves):
+    moves = moves.split()
+    for m in moves:
+        current_cube_state.move(m)
 
 
 def main():
-    draw_cube()
+    # draw_cube()
     cv2.waitKey()
 
-    take_input("Input the scramble for the cube")
+    # take_input("Input the scramble for the cube")
     # b2 y' r g o2 y r g b' g r2 o' b
 
     # take_input("Input the solution for the cube")
     # b' o r2 g' b g' r' y' o2 g' r' y b2
 
     # print(search(current_cube_state, [], 2))
+
+    scramble("b w r y2 o")
+
+    start_time = time.time()
 
     for depth in range(22):
         print("starting depth:", depth)
@@ -210,7 +199,9 @@ def main():
             print("solution found:", solution)
             break
 
-    cv2.waitKey()
+    print("Runtime: {}".format(time.time() - start_time))
+
+    #cv2.waitKey()
 
     # ser = serial.Serial('COM4', 9600)
     #
