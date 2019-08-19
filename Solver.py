@@ -1,22 +1,22 @@
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 from FaceletModel import FaceletModel
 from copy import deepcopy
-import serial
+# import serial
 import time
 
 
-draw_after_moves = True
+# draw_after_moves = True
 
 # b, g, r, o, y, w
-ideal_colors = [(255, 50, 0), (0, 255, 0), (0, 0, 255), (0, 140, 255), (0, 235, 235), (255, 255, 255)]
-sticker_colors = [(230, 109, 1), (75, 210, 0), (19, 35, 189), (38, 79, 215), (39, 218, 187), (187, 194, 195)]
-
-cube_face_images = ["b.jpg", "g.jpg", "r.jpg", "o.jpg", "y.jpg", "w.jpg"]
+# ideal_colors = [(255, 50, 0), (0, 255, 0), (0, 0, 255), (0, 140, 255), (0, 235, 235), (255, 255, 255)]
+# sticker_colors = [(230, 109, 1), (75, 210, 0), (19, 35, 189), (38, 79, 215), (39, 218, 187), (187, 194, 195)]
+#
+# cube_face_images = ["b.jpg", "g.jpg", "r.jpg", "o.jpg", "y.jpg", "w.jpg"]
 
 all_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"]
 
-cube_image = np.zeros((410, 308, 3), np.uint8)
+# cube_image = np.zeros((410, 308, 3), np.uint8)
 
 solved_cube = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5]
 
@@ -58,34 +58,34 @@ current_cube_state = FaceletModel(solved_cube)
 #     # cv2.waitKey(0)
 
 
-def draw_cube():
-    i = 0
-    x_offset = 104
-    y_offset = 104
-    while i < 54:
-        for y in range(3):
-            for x in range(3):
-                cv2.rectangle(cube_image, (x_offset + 33 * x, y_offset + 33 * y), (x_offset + 33 * (x + 1), y_offset + 33 * (y + 1)), ideal_colors[int(current_cube_state.get(i))], -1)
-                cv2.rectangle(cube_image, (x_offset + 33 * x, y_offset + 33 * y), (x_offset + 33 * (x + 1), y_offset + 33 * (y + 1)), (0, 0, 0), 2)
-                i += 1
-        if i == 9:
-            x_offset = 104
-            y_offset = 308
-        elif i == 18:
-            x_offset = 206
-            y_offset = 104
-        elif i == 27:
-            x_offset = 2
-            y_offset = 104
-        elif i == 36:
-            x_offset = 104
-            y_offset = 2
-        elif i == 45:
-            x_offset = 104
-            y_offset = 206
-
-    cv2.destroyAllWindows()
-    cv2.imshow("cube", cube_image)
+# def draw_cube():
+#     i = 0
+#     x_offset = 104
+#     y_offset = 104
+#     while i < 54:
+#         for y in range(3):
+#             for x in range(3):
+#                 cv2.rectangle(cube_image, (x_offset + 33 * x, y_offset + 33 * y), (x_offset + 33 * (x + 1), y_offset + 33 * (y + 1)), ideal_colors[int(current_cube_state.get(i))], -1)
+#                 cv2.rectangle(cube_image, (x_offset + 33 * x, y_offset + 33 * y), (x_offset + 33 * (x + 1), y_offset + 33 * (y + 1)), (0, 0, 0), 2)
+#                 i += 1
+#         if i == 9:
+#             x_offset = 104
+#             y_offset = 308
+#         elif i == 18:
+#             x_offset = 206
+#             y_offset = 104
+#         elif i == 27:
+#             x_offset = 2
+#             y_offset = 104
+#         elif i == 36:
+#             x_offset = 104
+#             y_offset = 2
+#         elif i == 45:
+#             x_offset = 104
+#             y_offset = 206
+#
+#     cv2.destroyAllWindows()
+#     cv2.imshow("cube", cube_image)
 
 
 # def set_all_faces_from_images():
@@ -102,14 +102,14 @@ def draw_cube():
 #         count += 1
 
 
-def take_input(prompt=""):
-    print(prompt)
-    alg = input()
-    moves = alg.split()
-    for temp in moves:
-        current_cube_state.move(temp)
-        draw_cube()
-        cv2.waitKey(200)
+# def take_input(prompt=""):
+#     print(prompt)
+#     alg = input()
+#     moves = alg.split()
+#     for temp in moves:
+#         current_cube_state.move(temp)
+#         draw_cube()
+#         cv2.waitKey(200)
 
 
 def is_solved(state):
@@ -178,7 +178,7 @@ def scramble(moves):
 
 def main():
     # draw_cube()
-    cv2.waitKey()
+    # cv2.waitKey()
 
     # take_input("Input the scramble for the cube")
     # b2 y' r g o2 y r g b' g r2 o' b
