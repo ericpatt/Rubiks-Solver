@@ -179,7 +179,7 @@ def scramble(moves):
 
 
 def main():
-    cubie_model.print()
+    cubie_model.print_edges()
     # draw_cube()
     # cv2.waitKey()
 
@@ -191,9 +191,9 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    scramble("w b2 y' o2 g r")
+    scramble("r'")
 
-    cubie_model.print()
+    cubie_model.print_edges()
 
     # start_time = time.time()
     #

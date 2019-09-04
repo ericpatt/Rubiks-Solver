@@ -107,8 +107,8 @@ class CubieModel:
             temp_corners[5] = self.get_corner_oriented(4, 1)
 
             temp_edges[0] = self.get_edge_oriented(5, 1)
-            temp_edges[4] = self.get_edge_oriented(0, 0)
-            temp_edges[5] = self.get_edge_oriented(8, 0)
+            temp_edges[4] = self.get_edge_oriented(0, 1)
+            temp_edges[5] = self.get_edge_oriented(8, 1)
             temp_edges[8] = self.get_edge_oriented(4, 1)
         elif face == "r'":
             temp_corners[0] = self.get_corner_oriented(4, 1)
@@ -116,10 +116,10 @@ class CubieModel:
             temp_corners[4] = self.get_corner_oriented(5, 2)
             temp_corners[5] = self.get_corner_oriented(1, 1)
 
-            temp_edges[0] = self.get_edge_oriented(4, 0)
+            temp_edges[0] = self.get_edge_oriented(4, 1)
             temp_edges[4] = self.get_edge_oriented(8, 1)
             temp_edges[5] = self.get_edge_oriented(0, 1)
-            temp_edges[8] = self.get_edge_oriented(5, 0)
+            temp_edges[8] = self.get_edge_oriented(5, 1)
         elif face == "r2":
             temp_corners[0] = self.get_corner_oriented(5, 0)
             temp_corners[1] = self.get_corner_oriented(4, 0)
@@ -136,20 +136,20 @@ class CubieModel:
             temp_corners[6] = self.get_corner_oriented(2, 2)
             temp_corners[7] = self.get_corner_oriented(6, 1)
 
-            temp_edges[2] = self.get_edge_oriented(7, 0)
+            temp_edges[2] = self.get_edge_oriented(7, 1)
             temp_edges[6] = self.get_edge_oriented(2, 1)
             temp_edges[7] = self.get_edge_oriented(10, 1)
-            temp_edges[10] = self.get_edge_oriented(6, 0)
+            temp_edges[10] = self.get_edge_oriented(6, 1)
         elif face == "o'":
             temp_corners[2] = self.get_corner_oriented(6, 1)
             temp_corners[3] = self.get_corner_oriented(2, 2)
             temp_corners[6] = self.get_corner_oriented(7, 2)
             temp_corners[7] = self.get_corner_oriented(3, 1)
 
-            temp_edges[2] = self.get_edge_oriented(6, 0)
+            temp_edges[2] = self.get_edge_oriented(6, 1)
             temp_edges[6] = self.get_edge_oriented(10, 1)
             temp_edges[7] = self.get_edge_oriented(2, 1)
-            temp_edges[10] = self.get_edge_oriented(8, 0)
+            temp_edges[10] = self.get_edge_oriented(8, 1)
         elif face == "o2":
             temp_corners[2] = self.get_corner_oriented(7, 0)
             temp_corners[3] = self.get_corner_oriented(6, 0)
@@ -224,7 +224,12 @@ class CubieModel:
         self.corners = deepcopy(temp_corners)
         self.edges = deepcopy(temp_edges)
 
-    def print(self):
+    def print_corners(self):
         for c in self.corners:
             print(c)
+        print()
+
+    def print_edges(self):
+        for e in self.edges:
+            print(e)
         print()
