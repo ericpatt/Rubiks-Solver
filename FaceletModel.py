@@ -35,7 +35,7 @@ class FaceletModel:
         temp[ind + 8] = self.stickers[ind + 2]
 
     def move(self, face):
-        temp = deepcopy(self.stickers)
+        temp = self.get_state()
         if face == "b":
             # rotate blue face
             self.__rotate_face_clockwise(temp, 0)
@@ -66,7 +66,7 @@ class FaceletModel:
             # rotate blue face
             self.__rotate_face_counterclockwise(temp, 0)
 
-            # yellow face
+             # yellow face
             temp[42] = self.stickers[18]
             temp[43] = self.stickers[21]
             temp[44] = self.stickers[24]
@@ -151,7 +151,7 @@ class FaceletModel:
             # blue face
             temp[6] = self.stickers[33]
             temp[7] = self.stickers[34]
-            temp[8] = self.stickers[35]\
+            temp[8] = self.stickers[35]
 
             # red face
             temp[24] = self.stickers[6]
@@ -357,28 +357,28 @@ class FaceletModel:
 
         self.stickers = deepcopy(temp)
 
-    def unmove(self, face):
-        if face == "b":
-            self.move("b'")
-        elif face == "b'":
-            self.move("b")
-        elif face == "g":
-            self.move("g'")
-        elif face == "g'":
-            self.move("g")
-        elif face == "r":
-            self.move("r'")
-        elif face == "r'":
-            self.move("r")
-        elif face == "o":
-            self.move("o'")
-        elif face == "o'":
-            self.move("o")
-        elif face == "y":
-            self.move("y'")
-        elif face == "y'":
-            self.move("y")
-        elif face == "w":
-            self.move("w'")
-        elif face == "w'":
-            self.move("w")
+    # def unmove(self, face):
+    #     if face == "b":
+    #         self.move("b'")
+    #     elif face == "b'":
+    #         self.move("b")
+    #     elif face == "g":
+    #         self.move("g'")
+    #     elif face == "g'":
+    #         self.move("g")
+    #     elif face == "r":
+    #         self.move("r'")
+    #     elif face == "r'":
+    #         self.move("r")
+    #     elif face == "o":
+    #         self.move("o'")
+    #     elif face == "o'":
+    #         self.move("o")
+    #     elif face == "y":
+    #         self.move("y'")
+    #     elif face == "y'":
+    #         self.move("y")
+    #     elif face == "w":
+    #         self.move("w'")
+    #     elif face == "w'":
+    #         self.move("w")

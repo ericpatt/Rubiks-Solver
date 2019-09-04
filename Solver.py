@@ -1,11 +1,12 @@
 # import cv2
 # import numpy as np
 from FaceletModel import FaceletModel
+from CubieModel import CubieModel
+from RubiksModel import RubiksModel
 from copy import deepcopy
 # import serial
 import time
-import pyximport; pyximport.install()
-import Searcher
+# import pyximport; pyximport.install()
 
 # draw_after_moves = True
 
@@ -17,7 +18,11 @@ all_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2",
 
 solved_cube = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5]
 
-current_cube_state = FaceletModel(solved_cube)
+facelet_model = FaceletModel(solved_cube)
+
+cubie_model = CubieModel()
+
+current_cube = RubiksModel(facelet_model, cubie_model)
 
 
 # def set_face_from_image(face_img, face_ind):
@@ -162,19 +167,19 @@ def search(cube, moves_made, depth):
     for sol in solutions:
         if len(sol) < shortest_len:
             shortest_solution = sol
+            shortest_len = len(sol)
 
     return shortest_solution
-
-
 
 
 def scramble(moves):
     moves = moves.split()
     for m in moves:
-        current_cube_state.move(m)
+        current_cube.move(m)
 
 
 def main():
+    cubie_model.print()
     # draw_cube()
     # cv2.waitKey()
 
@@ -186,18 +191,20 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    scramble("b w r y2")
+    scramble("w b2 y' o2 g r")
 
-    start_time = time.time()
+    cubie_model.print()
 
-    for depth in range(22):
-        print("starting depth:", depth)
-        solution = search(current_cube_state, [], depth)
-        if solution is not None:
-            print("solution found:", solution)
-            break
-
-    print("Runtime: {}".format(time.time() - start_time))
+    # start_time = time.time()
+    #
+    # for depth in range(22):
+    #     print("starting depth:", depth)
+    #     solution = search(current_cube_state, [], depth)
+    #     if solution is not None:
+    #         print("solution found:", solution)
+    #         break
+    #
+    # print("Runtime: {}".format(time.time() - start_time))
 
     # cv2.waitKey()
 

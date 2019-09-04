@@ -1,4 +1,4 @@
 from distutils.core import setup
 from Cython.Build import cythonize
 
-setup(ext_modules=cythonize("Solver.pyx"))
+setup(ext_modules=cythonize("Solver.py"))
