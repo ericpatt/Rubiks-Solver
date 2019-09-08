@@ -14,7 +14,9 @@ import time
 # ideal_colors = [(255, 50, 0), (0, 255, 0), (0, 0, 255), (0, 140, 255), (0, 235, 235), (255, 255, 255)]
 # sticker_colors = [(230, 109, 1), (75, 210, 0), (19, 35, 189), (38, 79, 215), (39, 218, 187), (187, 194, 195)]
 
-all_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"]
+phase1_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"]
+phase2_moves = ["b", "b'", "b2", "g", "g'", "g2", "r2", "o2", "y2", "w2"]
+
 
 solved_cube = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5]
 
@@ -24,6 +26,8 @@ cubie_model = CubieModel()
 
 current_cube = RubiksModel(facelet_model, cubie_model)
 
+max_length = 30
+current_depth = 0
 
 # def set_face_from_image(face_img, face_ind):
 #     image = cv2.imread(face_img)
@@ -119,33 +123,37 @@ def is_solved(state):
 
 def valid_moves(prev_move):
     if len(prev_move) == 0:
-        return all_moves
+        return phase1_moves
 
     invalid = []
-    if prev_move[0] == "b":
+    if prev_move[0] == "b" or prev_move[0] == "b'" or prev_move[0] == "b2":
         invalid = ["b", "b'", "b2"]
-    elif prev_move[0] == "g":
+    elif prev_move[0] == "g" or prev_move[0] == "g'" or prev_move[0] == "g2":
         invalid = ["g", "g'", "g2", "b", "b'", "b2"]
-    elif prev_move[0] == "r":
+    elif prev_move[0] == "r" or prev_move[0] == "r'" or prev_move[0] == "r2":
         invalid = ["r", "r'", "r2"]
-    elif prev_move[0] == "o":
+    elif prev_move[0] == "o" or prev_move[0] == "o'" or prev_move[0] == "o2":
         invalid = ["o", "o'", "o2", "r", "r'", "r2"]
-    elif prev_move[0] == "y":
+    elif prev_move[0] == "y" or prev_move[0] == "y'" or prev_move[0] == "y2":
         invalid = ["y", "y'", "y2"]
-    elif prev_move[0] == "w":
+    elif prev_move[0] == "w" or prev_move[0] == "w'" or prev_move[0] == "w2":
         invalid = ["w", "w'", "w2", "y", "y'", "y2"]
-    return [m for m in all_moves if m not in invalid]
+    return [m for m in phase1_moves if m not in invalid]
 
 
-def search(cube, moves_made, depth):
+def generate_pruning_tables():
+    return
+
+
+def phase1_search(cube, moves_made, depth):
     if depth <= 0:
         # print(moves_made)
         # print(cube.get_state())
-        if is_solved(cube.get_state()):
-            return moves_made
+        if cube.phase1_coords() == (0, 0, 0) and (len(moves_made) == 0 or moves_made[-1] in ["r", "r'", "o", "o'", "y", "y'", "w", "w'"]):
+            return phase2_start(cube, moves_made, depth)
         return None
 
-    valid = all_moves
+    valid = phase1_moves
 
     if len(moves_made) > 0:
         valid = valid_moves(moves_made[-1])
@@ -156,7 +164,7 @@ def search(cube, moves_made, depth):
         next_cube = deepcopy(cube)
         next_cube.move(m)
         moves_made.append(m)
-        possible_solution = search(next_cube, deepcopy(moves_made), depth - 1)
+        possible_solution = phase1_search(next_cube, deepcopy(moves_made), depth - 1)
         if possible_solution is not None:
             solutions.append(possible_solution)
         del moves_made[-1]
@@ -172,6 +180,59 @@ def search(cube, moves_made, depth):
     return shortest_solution
 
 
+def phase2_search(cube, moves_made, depth):
+    if depth <= 0:
+        # print(moves_made)
+        # print(cube.get_state())
+        if is_solved(cube.get_facelets().get_state()):
+            return moves_made
+        return None
+
+    valid = phase2_moves
+
+    # if len(moves_made) > 0:
+    #     valid = valid_moves(moves_made[-1])
+
+    solutions = []
+
+    for m in valid:
+        next_cube = deepcopy(cube)
+        next_cube.move(m)
+        moves_made.append(m)
+        possible_solution = phase2_search(next_cube, deepcopy(moves_made), depth - 1)
+        if possible_solution is not None:
+            solutions.append(possible_solution)
+        del moves_made[-1]
+
+    shortest_solution = None
+    shortest_len = 100
+
+    for sol in solutions:
+        if len(sol) < shortest_len:
+            shortest_solution = sol
+            shortest_len = len(sol)
+
+    return shortest_solution
+
+
+def kociemba_start():
+    for depth in range(max_length):
+        print("Phase 1, depth:", depth)
+        solution = phase1_search(current_cube, [], depth)
+        if solution is not None:
+            print("solution found:", solution)
+            break
+
+
+def phase2_start(cube, prev_moves, d):
+    print(prev_moves)
+    for depth in range(max_length - d):
+        print("Phase 2, depth:", depth)
+        solution = phase2_search(cube, prev_moves, depth)
+        if solution is not None:
+            return solution
+
+
 def scramble(moves):
     moves = moves.split()
     for m in moves:
@@ -179,7 +240,6 @@ def scramble(moves):
 
 
 def main():
-    cubie_model.print_edges()
     # draw_cube()
     # cv2.waitKey()
 
@@ -191,22 +251,13 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    scramble("r'")
+    scramble("g' y2 b w'")
 
-    cubie_model.print_edges()
+    start_time = time.time()
 
-    # start_time = time.time()
-    #
-    # for depth in range(22):
-    #     print("starting depth:", depth)
-    #     solution = search(current_cube_state, [], depth)
-    #     if solution is not None:
-    #         print("solution found:", solution)
-    #         break
-    #
-    # print("Runtime: {}".format(time.time() - start_time))
+    kociemba_start()
 
-    # cv2.waitKey()
+    print("Runtime: {}".format(time.time() - start_time))
 
     # ser = serial.Serial('COM4', 9600)
     #

@@ -1,3 +1,6 @@
+from scipy import special
+
+
 class CoordinateModel:
 
     def __init__(self, cubie):
@@ -21,4 +24,15 @@ class CoordinateModel:
         return coord
 
     def ud_slice_coord(self):
-        return 0
+        edges = self.cubie_model.get_edges()
+        coord = 0
+        ud_seen = 0
+        for i in range(11, -1, -1):
+            if edges[i][0] >= 8:
+                ud_seen += 1
+                if ud_seen >= 4:
+                    break
+            else:
+                coord += special.comb(i, 3 - ud_seen, exact=True)
+
+        return coord
