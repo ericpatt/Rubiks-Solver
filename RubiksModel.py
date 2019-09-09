@@ -20,3 +20,41 @@ class RubiksModel:
 
     def phase1_coords(self):
         return self.coordinate_model.phase1_coords()
+
+    def unmove(self, face):
+        if face == "b":
+            self.move("b'")
+        elif face == "b'":
+            self.move("b")
+        elif face == "b2":
+            self.move("b2")
+        elif face == "g":
+            self.move("g'")
+        elif face == "g'":
+            self.move("g")
+        elif face == "g2":
+            self.move("g2")
+        elif face == "r":
+            self.move("r'")
+        elif face == "r'":
+            self.move("r")
+        elif face == "r2":
+            self.move("r2")
+        elif face == "o":
+            self.move("o'")
+        elif face == "o'":
+            self.move("o")
+        elif face == "o2":
+            self.move("o2")
+        elif face == "y":
+            self.move("y'")
+        elif face == "y'":
+            self.move("y")
+        elif face == "y2":
+            self.move("y2")
+        elif face == "w":
+            self.move("w'")
+        elif face == "w'":
+            self.move("w")
+        elif face == "w2":
+            self.move("w2")

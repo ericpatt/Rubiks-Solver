@@ -1,5 +1,6 @@
 # import cv2
-# import numpy as np
+import pickle
+import numpy as np
 from FaceletModel import FaceletModel
 from CubieModel import CubieModel
 from RubiksModel import RubiksModel
@@ -17,6 +18,9 @@ import time
 phase1_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"]
 phase2_moves = ["b", "b'", "b2", "g", "g'", "g2", "r2", "o2", "y2", "w2"]
 
+p1_edge_prune = np.full(2048, -1)
+p1_corner_prune = np.full(2187, -1)
+p1_ud_prune = np.full(496, -1)
 
 solved_cube = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5]
 
@@ -141,8 +145,55 @@ def valid_moves(prev_move):
     return [m for m in phase1_moves if m not in invalid]
 
 
-def generate_pruning_tables():
-    return
+def pruning_helper(cube, depth, max_depth):
+    depth += 1
+    for m in phase1_moves:
+        c = deepcopy(cube)
+        c.move(m)
+        coords = c.phase1_coords()
+        if p1_corner_prune[coords[0]] == -1:
+            p1_corner_prune[coords[0]] = depth
+        if p1_edge_prune[coords[1]] == -1:
+            p1_edge_prune[coords[1]] = depth
+        if p1_ud_prune[coords[2]] == -1:
+            p1_ud_prune[coords[2]] = depth
+        if depth < max_depth:
+            pruning_helper(c, depth, max_depth)
+
+
+def generate_pruning_tables(depth):
+    p1_corner_prune[0] = 0
+    p1_edge_prune[0] = 0
+    p1_ud_prune[0] = 0
+    pruning_helper(current_cube, 0, depth)
+    pickle.dump(p1_corner_prune, open("p1_corner_pruning_table.p", "wb"))
+    pickle.dump(p1_edge_prune, open("p1_edge_pruning_table.p", "wb"))
+    pickle.dump(p1_ud_prune, open("p1_ud_pruning_table.p", "wb"))
+
+
+def load_pruning_tables():
+    global p1_corner_prune, p1_edge_prune, p1_ud_prune
+    p1_corner_prune = pickle.load(open("p1_corner_pruning_table.p", "rb"))
+    p1_edge_prune = pickle.load(open("p1_edge_pruning_table.p", "rb"))
+    p1_ud_prune = pickle.load(open("p1_ud_pruning_table.p", "rb"))
+
+
+def check_pruning_tables():
+    count = 0
+    for i in range(len(p1_corner_prune)):
+        if p1_corner_prune[i] != -1:
+            count += 1
+    print("corner table:", count)
+    count = 0
+    for i in range(len(p1_edge_prune)):
+        if p1_edge_prune[i] != -1:
+            count += 1
+    print("edge table:", count)
+    count = 0
+    for i in range(len(p1_ud_prune)):
+        if p1_ud_prune[i] != -1:
+            count += 1
+    print("ud table:", count)
 
 
 def phase1_search(cube, moves_made, depth):
@@ -150,7 +201,8 @@ def phase1_search(cube, moves_made, depth):
         # print(moves_made)
         # print(cube.get_state())
         if cube.phase1_coords() == (0, 0, 0) and (len(moves_made) == 0 or moves_made[-1] in ["r", "r'", "o", "o'", "y", "y'", "w", "w'"]):
-            return phase2_start(cube, moves_made, depth)
+            return moves_made
+            # return phase2_start(cube, moves_made, depth)
         return None
 
     valid = phase1_moves
@@ -160,14 +212,17 @@ def phase1_search(cube, moves_made, depth):
 
     solutions = []
 
-    for m in valid:
-        next_cube = deepcopy(cube)
-        next_cube.move(m)
-        moves_made.append(m)
-        possible_solution = phase1_search(next_cube, deepcopy(moves_made), depth - 1)
-        if possible_solution is not None:
-            solutions.append(possible_solution)
-        del moves_made[-1]
+    (c1, c2, c3) = cube.phase1_coords()
+
+    if max(p1_corner_prune[c1], p1_edge_prune[c2], p1_ud_prune[c3]) <= depth:
+        for m in valid:
+            next_cube = deepcopy(cube)
+            next_cube.move(m)
+            moves_made.append(m)
+            possible_solution = phase1_search(next_cube, deepcopy(moves_made), depth - 1)
+            if possible_solution is not None:
+                solutions.append(possible_solution)
+            del moves_made[-1]
 
     shortest_solution = None
     shortest_len = 100
@@ -251,7 +306,18 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    scramble("g' y2 b w'")
+    start_time = time.time()
+
+    load_pruning_tables()
+
+    print("Runtime to generate tables: {}".format(time.time() - start_time))
+
+    check_pruning_tables()
+    print(p1_corner_prune)
+    print(p1_edge_prune)
+    print(p1_ud_prune)
+
+    scramble("b2 r' w2 g y'")
 
     start_time = time.time()
 
