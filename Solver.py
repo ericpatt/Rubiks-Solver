@@ -308,13 +308,13 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    # start_time = time.time()
+    start_time = time.time()
 
     # load_pruning_tables()
 
     generate_pruning_tables(3)
 
-    # print("Runtime to generate tables: {}".format(time.time() - start_time))
+    print("Runtime to generate tables: {}".format(time.time() - start_time))
     #
     # check_pruning_tables()
     # print(p1_corner_prune)
