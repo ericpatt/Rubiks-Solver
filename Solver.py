@@ -1,10 +1,11 @@
 # import cv2
 import pickle
+import json
 import numpy as np
 from FaceletModel import FaceletModel
 from CubieModel import CubieModel
 from RubiksModel import RubiksModel
-from copy import deepcopy
+from copy import *
 # import serial
 import time
 # import pyximport; pyximport.install()
@@ -17,6 +18,10 @@ import time
 
 phase1_moves = np.array(["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"])
 phase2_moves = np.array(["b", "b'", "b2", "g", "g'", "g2", "r2", "o2", "y2", "w2"])
+
+# p1_edge_prune = {}
+# p1_corner_prune = {}
+# p1_ud_prune = {}
 
 p1_edge_prune = np.full(2048, -1)
 p1_corner_prune = np.full(2187, -1)
@@ -152,6 +157,12 @@ def pruning_helper(cube, depth, max_depth):
         c = deepcopy(cube)
         c.move(m)
         coords = c.phase1_coords()
+        # if coords[0] not in p1_corner_prune:
+        #     p1_corner_prune[coords[0]] = depth
+        # if coords[1] not in p1_edge_prune:
+        #     p1_edge_prune[coords[0]] = depth
+        # if coords[2] not in p1_ud_prune:
+        #     p1_ud_prune[coords[0]] = depth
         if p1_corner_prune[coords[0]] == -1:
             p1_corner_prune[coords[0]] = depth
         if p1_edge_prune[coords[1]] == -1:
@@ -176,7 +187,7 @@ def generate_pruning_tables(depth):
 def load_pruning_tables():
     global p1_corner_prune, p1_edge_prune, p1_ud_prune
     p1_corner_prune = pickle.load(open("p1_corner_pruning_table.p", "rb"))
-    p1_edge_prune = pickle.load(open("p1_edge_pruning_table.p", "rb"))
+    p1_edge_prune = pickle.load(open("p1_edge_pruning_table_5.p", "rb"))
     p1_ud_prune = pickle.load(open("p1_ud_pruning_table.p", "rb"))
 
 
@@ -200,8 +211,6 @@ def check_pruning_tables():
 
 def phase1_search(cube, moves_made, depth):
     if depth <= 0:
-        # print(moves_made)
-        # print(cube.get_state())
         if cube.phase1_coords() == (0, 0, 0) and (len(moves_made) == 0 or moves_made[-1] in ["r", "r'", "o", "o'", "y", "y'", "w", "w'"]):
             return moves_made
             # return phase2_start(cube, moves_made, depth)
@@ -216,15 +225,18 @@ def phase1_search(cube, moves_made, depth):
 
     (c1, c2, c3) = cube.phase1_coords()
 
+    # if max(p1_corner_prune.get(c1, -1), p1_edge_prune.get(c2, -1), p1_ud_prune.get(c3, -1)) <= depth:
     if max(p1_corner_prune[c1], p1_edge_prune[c2], p1_ud_prune[c3]) <= depth:
         for m in valid:
             next_cube = deepcopy(cube)
             next_cube.move(m)
+            # moves_made = np.append(moves_made, m)
             moves_made.append(m)
             possible_solution = phase1_search(next_cube, deepcopy(moves_made), depth - 1)
             if possible_solution is not None:
                 solutions.append(possible_solution)
             del moves_made[-1]
+            # moves_made = np.delete(moves_made, -1)
 
     shortest_solution = None
     shortest_len = 100
@@ -308,26 +320,26 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    start_time = time.time()
+    # start_time = time.time()
 
-    # load_pruning_tables()
+    load_pruning_tables()
 
-    generate_pruning_tables(3)
+    # generate_pruning_tables(4)
 
-    print("Runtime to generate tables: {}".format(time.time() - start_time))
+    # print("Runtime to generate tables: {}".format(time.time() - start_time))
 
-    check_pruning_tables()
+    # check_pruning_tables()
     # print(p1_corner_prune)
     # print(p1_edge_prune)
     # print(p1_ud_prune)
 
-    # scramble("b2 r' w2 g y' r2 w o'")
-    #
-    # start_time = time.time()
-    #
-    # kociemba_start()
-    #
-    # print("Runtime: {}".format(time.time() - start_time))
+    scramble("b2 r' w2 g y' r2 w' g2 y")
+
+    start_time = time.time()
+
+    kociemba_start()
+
+    print("Runtime: {}".format(time.time() - start_time))
 
     # ser = serial.Serial('COM4', 9600)
     #
