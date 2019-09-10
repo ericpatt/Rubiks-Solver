@@ -315,8 +315,8 @@ def main():
     generate_pruning_tables(3)
 
     print("Runtime to generate tables: {}".format(time.time() - start_time))
-    #
-    # check_pruning_tables()
+
+    check_pruning_tables()
     # print(p1_corner_prune)
     # print(p1_edge_prune)
     # print(p1_ud_prune)
