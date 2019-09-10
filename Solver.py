@@ -310,7 +310,9 @@ def main():
 
     # start_time = time.time()
 
-    load_pruning_tables()
+    # load_pruning_tables()
+
+    generate_pruning_tables(3)
 
     # print("Runtime to generate tables: {}".format(time.time() - start_time))
     #
@@ -319,13 +321,13 @@ def main():
     # print(p1_edge_prune)
     # print(p1_ud_prune)
 
-    scramble("b2 r' w2 g y' r2 w o'")
-
-    start_time = time.time()
-
-    kociemba_start()
-
-    print("Runtime: {}".format(time.time() - start_time))
+    # scramble("b2 r' w2 g y' r2 w o'")
+    #
+    # start_time = time.time()
+    #
+    # kociemba_start()
+    #
+    # print("Runtime: {}".format(time.time() - start_time))
 
     # ser = serial.Serial('COM4', 9600)
     #
