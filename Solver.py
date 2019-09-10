@@ -15,14 +15,14 @@ import time
 # ideal_colors = [(255, 50, 0), (0, 255, 0), (0, 0, 255), (0, 140, 255), (0, 235, 235), (255, 255, 255)]
 # sticker_colors = [(230, 109, 1), (75, 210, 0), (19, 35, 189), (38, 79, 215), (39, 218, 187), (187, 194, 195)]
 
-phase1_moves = ["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"]
-phase2_moves = ["b", "b'", "b2", "g", "g'", "g2", "r2", "o2", "y2", "w2"]
+phase1_moves = np.array(["b", "b'", "b2", "g", "g'", "g2", "r", "r'", "r2", "o", "o'", "o2", "y", "y'", "y2", "w", "w'", "w2"])
+phase2_moves = np.array(["b", "b'", "b2", "g", "g'", "g2", "r2", "o2", "y2", "w2"])
 
 p1_edge_prune = np.full(2048, -1)
 p1_corner_prune = np.full(2187, -1)
 p1_ud_prune = np.full(496, -1)
 
-solved_cube = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+solved_cube = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5])
 
 facelet_model = FaceletModel(solved_cube)
 
@@ -146,6 +146,7 @@ def valid_moves(prev_move):
 
 
 def pruning_helper(cube, depth, max_depth):
+    global p1_corner_prune, p1_edge_prune, p1_ud_prune
     depth += 1
     for m in phase1_moves:
         c = deepcopy(cube)
@@ -165,7 +166,8 @@ def generate_pruning_tables(depth):
     p1_corner_prune[0] = 0
     p1_edge_prune[0] = 0
     p1_ud_prune[0] = 0
-    pruning_helper(current_cube, 0, depth)
+    for i in range(1, depth + 1):
+        pruning_helper(current_cube, 0, i)
     pickle.dump(p1_corner_prune, open("p1_corner_pruning_table.p", "wb"))
     pickle.dump(p1_edge_prune, open("p1_edge_pruning_table.p", "wb"))
     pickle.dump(p1_ud_prune, open("p1_ud_pruning_table.p", "wb"))
@@ -306,18 +308,18 @@ def main():
 
     # print(search(current_cube_state, [], 2))
 
-    start_time = time.time()
+    # start_time = time.time()
 
     load_pruning_tables()
 
-    print("Runtime to generate tables: {}".format(time.time() - start_time))
+    # print("Runtime to generate tables: {}".format(time.time() - start_time))
+    #
+    # check_pruning_tables()
+    # print(p1_corner_prune)
+    # print(p1_edge_prune)
+    # print(p1_ud_prune)
 
-    check_pruning_tables()
-    print(p1_corner_prune)
-    print(p1_edge_prune)
-    print(p1_ud_prune)
-
-    scramble("b2 r' w2 g y'")
+    scramble("b2 r' w2 g y' r2 w o'")
 
     start_time = time.time()
 

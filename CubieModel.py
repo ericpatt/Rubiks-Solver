@@ -1,4 +1,5 @@
 from copy import deepcopy
+import numpy as np
 
 
 class CubieModel:
@@ -6,11 +7,11 @@ class CubieModel:
     def __init__(self):
         # URF, ULF, ULB, URB, DRF, DLF, DLB, DRB
         # BYR, BWR, BWO, BYO, GYR, GWR, GWO, GYO
-        self.corners = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0)]
+        self.corners = np.array([(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0)])
 
         # UF, UL, UB, UR, DF, DL, DB, DR, FR, FL, BL, BR
         # BR, BW, BO, BY, GR, GW, GO, GY, RY, RW, OW, OY
-        self.edges = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0)]
+        self.edges = np.array([(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0)])
         # 4 <-> 8
         # 5 <-> 9
         # 6 <-> 10
